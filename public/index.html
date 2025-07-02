@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Hub - Problem Statement Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>Talent Hub</h1>
+                <p>Problem Statement Form for Founders, Innovation Leads & Senior Problem Owners</p>
+            </div>
+            <div class="header-right">
+                <img src="https://digitalhealthcrc.com/wp-content/uploads/2022/09/DHCRC-Logo-Horizontal-Reversed-Colour-300x101.png" alt="Digital Health CRC Logo" class="dhcrc-logo">
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div id="loadingMessage" class="loading-message">
+                <div class="loading-spinner"></div>
+                <p>Loading form configuration...</p>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <!-- <div id="progressIndicator" class="progress-container" style="display: none;">
+                <div class="progress-header">
+                    <span class="progress-title">Form Progress</span>
+                    <span class="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-stats">
+                    <span class="fields-completed">0</span> of <span class="fields-total">0</span> fields completed
+                </div>
+                <div class="autosave-indicator" id="autosaveIndicator">
+                    <span class="autosave-icon">⬤</span>
+                    <span class="autosave-text">All changes saved</span>
+                </div>
+            </div> -->
+            
+            <div id="dynamicForm" style="display: none;">
+                <!-- Form will be dynamically generated here -->
+            </div>
+            <div id="errorMessage" class="error-message" style="display: none;">
+                <p>Error loading form configuration. Please try refreshing the page.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/utils.js"></script>
+    <script src="js/formGenerator.js"></script>
+    <script src="js/formSubmission.js"></script>
+    <script src="js/progressTracker.js"></script>
+    <script src="js/uiManager.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Legacy compatibility - Parse CSV text into array of objects
+        function parseCSV(csvText) {
+            // Handle different line endings
+            const lines = csvText.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+            
+            // Parse headers - we know they don't contain commas
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            
+            // We know the exact number of columns from headers
+            const numColumns = headers.length;
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue; // Skip empty lines
+                
+                // Split by comma but limit to expected number of columns
+                // This handles the case where item labels contain commas
+                const values = [];
+                let currentValue = '';
+                let commaCount = 0;
+                
+                // Parse each character
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    
+                    if (char === ',' && commaCount < numColumns - 1) {
+                        values.push(currentValue.trim());
+                        currentValue = '';
+                        commaCount++;
+                    } else {
+                        currentValue += char;
+                    }
+                }
+                // Push the last value
+                values.push(currentValue.trim());
+                
+                // Fill in any missing values
+                while (values.length < numColumns) {
+                    values.push('');
+                }
+                
+                // Create object from headers and values
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                data.push(row);
+            }
+            
+            return data;
+        }
+
+        // Initialize form on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch the CSV file
+            fetch('form.csv')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load form configuration');
+                    }
+                    return response.text();
+                })
+                .then(csvText => {
+                    const formData = parseCSV(csvText);
+                    generateForm(formData);
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('dynamicForm').style.display = 'block';
+                    // document.getElementById('progressIndicator').style.display = 'block';
+                    initializeProgress();
+                })
+                .catch(error => {
+                    console.error('Error loading form:', error);
+                    document.getElementById('loadingMessage').style.display = 'none';
+                    document.getElementById('errorMessage').style.display = 'block';
+                });
+        });
+
+        // Generate form from data
+        function generateForm(formData) {
+            const formContainer = document.getElementById('dynamicForm');
+            const sections = {};
+            
+            // Group by sections
+            formData.forEach(item => {
+                if (!sections[item.section_title]) {
+                    sections[item.section_title] = [];
+                }
+                sections[item.section_title].push(item);
+            });
+
+            let formHTML = '<div class="section-controls"><button type="button" class="expand-all-btn" onclick="expandAllSections()">Expand All</button><button type="button" class="collapse-all-btn" onclick="collapseAllSections()">Collapse All</button></div>';
+            formHTML += '<form id="dynamicGeneratedForm">';
+            
+            let sectionIndex = 0;
+            Object.keys(sections).forEach(sectionTitle => {
+                const isAISection = sectionTitle.toLowerCase().includes('ai-assisted');
+                const sectionClass = isAISection ? 'section ai-section collapsible' : 'section collapsible';
+                const sectionId = 'section-' + sectionIndex;
+                
+                formHTML += '<div class="' + sectionClass + '" data-section-id="' + sectionId + '">';
+                formHTML += '<div class="section-header" onclick="toggleSection(\'' + sectionId + '\')">';
+                formHTML += '<h2 class="section-title">' + sectionTitle + '</h2>';
+                formHTML += '<span class="section-toggle"><svg class="collapse-icon" width="20" height="20" viewBox="0 0 20 20"><path fill="currentColor" d="M5 7l5 5 5-5z"/></svg></span>';
+                formHTML += '</div>';
+                
+                formHTML += '<div class="section-content" id="' + sectionId + '">';
+                sections[sectionTitle].forEach(item => {
+                    formHTML += generateFormGroup(item);
+                });
+                
+                if (isAISection) {
+                    formHTML += '<div class="ai-note"><strong>AI Processing Note:</strong> This section will be enhanced by our AI algorithm to suggest additional relevant skills based on your problem description.</div>';
+                }
+                formHTML += '</div>';
+                
+                formHTML += '</div>';
+                sectionIndex++;
+            });
+
+            formHTML += '<div class="submit-section"><button type="submit" class="submit-btn">Submit Problem Statement</button><div style="margin-top: 20px; color: #888888; font-size: 0.9em;">Our AI will process your submission and match you with qualified talent</div></div></form>';
+
+            formContainer.innerHTML = formHTML;
+            
+            document.getElementById('dynamicGeneratedForm').addEventListener('submit', handleFormSubmit);
+            setupConditionalLogic();
+            restoreCollapseState();
+        }
+
+        // Generate individual form field
+        function generateFormGroup(item) {
+            const fieldName = item.form_label.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const requiredClass = item.required === 'true' ? 'required' : '';
+            const requiredAttr = item.required === 'true' ? 'required' : '';
+            
+            const showByDefault = item.show_by_default !== 'false';
+            const dependsOnField = item.depends_on_field || '';
+            const dependsOnValues = item.depends_on_values || '';
+            
+            const conditionalAttrs = dependsOnField ? 
+                'data-depends-on="' + dependsOnField + '" data-depends-values="' + dependsOnValues + '"' + (!showByDefault ? ' style="display: none;"' : '') : '';
+            
+            let html = '<div class="form-group conditional-field" ' + conditionalAttrs + '>';
+            html += '<label class="form-label ' + requiredClass + '">' + item.form_label + '</label>';
+            
+            if (item.form_instructions) {
+                html += '<div class="form-instructions">' + item.form_instructions + '</div>';
+            }
+            
+            switch (item.form_class) {
+                case 'text':
+                    html += '<input type="text" class="form-control" name="' + fieldName + '" ' + requiredAttr + ' placeholder="' + item.placeholder + '">';
+                    break;
+                    
+                case 'textarea':
+                    html += '<textarea class="form-control textarea" name="' + fieldName + '" ' + requiredAttr + ' placeholder="' + item.placeholder + '"></textarea>';
+                    break;
+                    
+                case 'date':
+                    html += '<input type="date" class="form-control" name="' + fieldName + '" ' + requiredAttr + '>';
+                    break;
+                    
+                case 'select':
+                    html += '<select class="form-control" name="' + fieldName + '" ' + requiredAttr + '>';
+                    html += '<option value="">Select option...</option>';
+                    for (let i = 1; i <= 6; i++) {
+                        const optionLabel = item['item_label_' + i];
+                        if (optionLabel) {
+                            html += '<option value="' + optionLabel + '">' + optionLabel + '</option>';
+                        }
+                    }
+                    html += '</select>';
+                    break;
+                    
+                case 'checkbox-group':
+                    html += '<div class="checkbox-group">';
+                    for (let i = 1; i <= 6; i++) {
+                        const optionLabel = item['item_label_' + i];
+                        if (optionLabel) {
+                            const optionId = fieldName + '_' + i;
+                            html += '<div class="checkbox-item">';
+                            html += '<input type="checkbox" id="' + optionId + '" name="' + fieldName + '" value="' + optionLabel + '">';
+                            html += '<label for="' + optionId + '">' + optionLabel + '</label>';
+                            html += '</div>';
+                        }
+                    }
+                    html += '</div>';
+                    break;
+                    
+                case 'radio-group':
+                    html += '<div class="radio-group">';
+                    for (let i = 1; i <= 6; i++) {
+                        const optionLabel = item['item_label_' + i];
+                        if (optionLabel) {
+                            const optionId = fieldName + '_' + i;
+                            html += '<div class="radio-item">';
+                            html += '<input type="radio" id="' + optionId + '" name="' + fieldName + '" value="' + optionLabel + '" ' + requiredAttr + '>';
+                            html += '<label for="' + optionId + '">' + optionLabel + '</label>';
+                            html += '</div>';
+                        }
+                    }
+                    html += '</div>';
+                    break;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Setup conditional logic
+        function setupConditionalLogic() {
+            const form = document.getElementById('dynamicGeneratedForm');
+            if (!form) return;
+
+            const allInputs = form.querySelectorAll('input, select, textarea');
+            allInputs.forEach(input => {
+                input.addEventListener('change', handleFieldChange);
+            });
+
+            checkAllConditionalFields();
+        }
+
+        // Handle field changes
+        function handleFieldChange(event) {
+            const changedField = event.target;
+            const fieldName = changedField.name;
+            
+            const dependentFields = document.querySelectorAll('[data-depends-on="' + fieldName + '"]');
+            
+            dependentFields.forEach(field => {
+                checkConditionalField(field, changedField);
+            });
+            
+            // Update progress after conditional field changes
+            setTimeout(updateProgress, 350);
+        }
+
+        // Check conditional field visibility
+        function checkConditionalField(fieldElement, triggerField) {
+            const dependsOnValues = fieldElement.getAttribute('data-depends-values').split('|');
+            const triggerValue = getFieldValue(triggerField);
+            
+            const shouldShow = dependsOnValues.includes(triggerValue);
+            
+            if (shouldShow) {
+                fieldElement.style.display = 'block';
+                fieldElement.style.opacity = '0';
+                fieldElement.style.transform = 'translateY(10px)';
+                
+                setTimeout(function() {
+                    fieldElement.style.transition = 'all 0.3s ease';
+                    fieldElement.style.opacity = '1';
+                    fieldElement.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                fieldElement.style.transition = 'all 0.3s ease';
+                fieldElement.style.opacity = '0';
+                fieldElement.style.transform = 'translateY(-10px)';
+                
+                setTimeout(function() {
+                    fieldElement.style.display = 'none';
+                    clearFieldValue(fieldElement);
+                }, 300);
+            }
+        }
+
+        // Get field value
+        function getFieldValue(field) {
+            if (field.type === 'radio') {
+                const checkedRadio = document.querySelector('input[name="' + field.name + '"]:checked');
+                return checkedRadio ? checkedRadio.value : '';
+            } else if (field.type === 'checkbox') {
+                const checkedBoxes = document.querySelectorAll('input[name="' + field.name + '"]:checked');
+                return Array.from(checkedBoxes).map(function(cb) { return cb.value; }).join('|');
+            } else {
+                return field.value;
+            }
+        }
+
+        // Clear field values
+        function clearFieldValue(fieldElement) {
+            const inputs = fieldElement.querySelectorAll('input, select, textarea');
+            inputs.forEach(function(input) {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+        }
+
+        // Check all conditional fields
+        function checkAllConditionalFields() {
+            const conditionalFields = document.querySelectorAll('[data-depends-on]');
+            
+            conditionalFields.forEach(function(field) {
+                const dependsOnFieldName = field.getAttribute('data-depends-on');
+                const triggerField = document.querySelector('[name="' + dependsOnFieldName + '"]');
+                
+                if (triggerField) {
+                    checkConditionalField(field, triggerField);
+                }
+            });
+        }
+
+        // Handle form submission
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            // Disable submit button and show loading state
+            const submitBtn = e.target.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner-small"></span> Submitting...';
+            
+            try {
+                const data = getFormData();
+                
+                // Check if server is available
+                const isServerAvailable = await checkServerHealth();
+                
+                if (!isServerAvailable) {
+                    // Fallback: Save to localStorage as completed submission
+                    const submission = {
+                        ...data,
+                        submissionId: Date.now().toString(36) + Math.random().toString(36).substr(2),
+                        submittedAt: new Date().toISOString(),
+                        status: 'saved_locally'
+                    };
+                    
+                    // Save to localStorage
+                    const savedSubmissions = JSON.parse(localStorage.getItem('talentHubSubmissions') || '[]');
+                    savedSubmissions.push(submission);
+                    localStorage.setItem('talentHubSubmissions', JSON.stringify(savedSubmissions));
+                    
+                    // Clear form data
+                    localStorage.removeItem('talentHubFormData');
+                    localStorage.removeItem('talentHubFormTimestamp');
+                    
+                    // Show success with note about local save
+                    showSubmissionSuccess(submission.submissionId, true);
+                    
+                    // Reset form after delay
+                    setTimeout(() => {
+                        if (confirm('Would you like to submit another problem statement?')) {
+                            e.target.reset();
+                            updateProgress();
+                            window.scrollTo(0, 0);
+                        }
+                    }, 2000);
+                    
+                    return;
+                }
+                
+                // Submit to server
+                const response = await fetch('/api/submit-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server not available. Please ensure the server is running.');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Clear local storage on successful submission
+                    if (result.clearLocalStorage) {
+                        localStorage.removeItem('talentHubFormData');
+                        localStorage.removeItem('talentHubFormTimestamp');
+                    }
+                    
+                    // Show success message
+                    showSubmissionSuccess(result.submissionId);
+                    
+                    // Reset form after a delay
+                    setTimeout(() => {
+                        if (confirm('Would you like to submit another problem statement?')) {
+                            e.target.reset();
+                            updateProgress();
+                            window.scrollTo(0, 0);
+                        }
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'Submission failed');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showSubmissionError(error.message);
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+        
+        // Check server health
+        async function checkServerHealth() {
+            try {
+                const response = await fetch('/api/health', { 
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+        
+        // Show submission success message
+        function showSubmissionSuccess(submissionId, isLocalSave = false) {
+            const message = document.createElement('div');
+            message.className = 'submission-message success';
+            message.innerHTML = `
+                <div class="message-icon">✓</div>
+                <div class="message-content">
+                    <h3>Submission ${isLocalSave ? 'Saved Locally' : 'Successful'}!</h3>
+                    <p>${isLocalSave ? 'Your submission has been saved locally.' : 'Your problem statement has been received.'}</p>
+                    <p class="submission-id">Reference ID: ${submissionId}</p>
+                    <p>${isLocalSave ? 'It will be submitted when the server is available.' : 'Our AI will process your submission and match you with qualified talent.'}</p>
+                </div>
+            `;
+            
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                message.classList.remove('show');
+                setTimeout(() => message.remove(), 300);
+            }, 5000);
+        }
+        
+        // Show submission error message
+        function showSubmissionError(error) {
+            const message = document.createElement('div');
+            message.className = 'submission-message error';
+            message.innerHTML = `
+                <div class="message-icon">✗</div>
+                <div class="message-content">
+                    <h3>Submission Failed</h3>
+                    <p>${error}</p>
+                    <p>Please check your form and try again.</p>
+                </div>
+            `;
+            
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                message.classList.remove('show');
+                setTimeout(() => message.remove(), 300);
+            }, 5000);
+        }
+
+        // Initialize progress tracking
+        function initializeProgress() {
+            updateProgress();
+            
+            // Add event listeners to all form inputs
+            const form = document.getElementById('dynamicGeneratedForm');
+            if (!form) return;
+            
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.addEventListener('change', () => {
+                        updateProgress();
+                        autoSaveForm();
+                    });
+                } else {
+                    input.addEventListener('input', debounce(() => {
+                        updateProgress();
+                        autoSaveForm();
+                    }, 300));
+                }
+            });
+            
+            // Restore saved form data
+            restoreFormData();
+        }
+
+        // Update progress indicator
+        function updateProgress() {
+            const form = document.getElementById('dynamicGeneratedForm');
+            if (!form) return;
+            
+            // Get all required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            const totalRequired = requiredFields.length;
+            let completedRequired = 0;
+            
+            // Get all fields (including optional)
+            const allFields = form.querySelectorAll('input, select, textarea');
+            const fieldGroups = new Map();
+            
+            // Group fields by name (for radio/checkbox groups)
+            allFields.forEach(field => {
+                const name = field.name;
+                if (!fieldGroups.has(name)) {
+                    fieldGroups.set(name, []);
+                }
+                fieldGroups.get(name).push(field);
+            });
+            
+            // Count completed fields
+            let totalFields = fieldGroups.size;
+            let completedFields = 0;
+            
+            fieldGroups.forEach((fields, name) => {
+                const isRequired = fields.some(f => f.hasAttribute('required'));
+                const isCompleted = isFieldCompleted(fields);
+                
+                if (isCompleted) {
+                    completedFields++;
+                    if (isRequired) {
+                        completedRequired++;
+                    }
+                }
+            });
+            
+            // Calculate percentage based on all fields to match the displayed count
+            const percentage = totalFields > 0 ? Math.round((completedFields / totalFields) * 100) : 0;
+            
+            // Update UI - commented out but logic preserved
+            // document.querySelector('.progress-percentage').textContent = percentage + '%';
+            // document.querySelector('.progress-fill').style.width = percentage + '%';
+            // document.querySelector('.fields-completed').textContent = completedFields;
+            // document.querySelector('.fields-total').textContent = totalFields;
+            
+            // Add visual feedback when complete
+            // const progressContainer = document.querySelector('.progress-container');
+            // if (percentage === 100) {
+            //     progressContainer.classList.add('complete');
+            // } else {
+            //     progressContainer.classList.remove('complete');
+            // }
+        }
+
+        // Check if a field or field group is completed
+        function isFieldCompleted(fields) {
+            const field = fields[0];
+            
+            if (field.type === 'checkbox') {
+                // At least one checkbox must be checked
+                return fields.some(f => f.checked);
+            } else if (field.type === 'radio') {
+                // One radio must be selected
+                return fields.some(f => f.checked);
+            } else {
+                // Text, select, textarea must have value
+                return field.value.trim() !== '';
+            }
+        }
+
+        // Debounce function to limit update frequency
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Toggle section collapse/expand
+        function toggleSection(sectionId) {
+            const section = document.querySelector('[data-section-id="' + sectionId + '"]');
+            const content = document.getElementById(sectionId);
+            const icon = section.querySelector('.collapse-icon');
+            
+            if (section.classList.contains('collapsed')) {
+                section.classList.remove('collapsed');
+                content.style.maxHeight = content.scrollHeight + 'px';
+                setTimeout(() => {
+                    content.style.maxHeight = 'none';
+                }, 300);
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.offsetHeight; // Force reflow
+                content.style.maxHeight = '0';
+                section.classList.add('collapsed');
+            }
+            
+            // Save state to localStorage
+            saveCollapseState();
+        }
+
+        // Expand all sections
+        function expandAllSections() {
+            document.querySelectorAll('.section.collapsible').forEach(section => {
+                section.classList.remove('collapsed');
+                const content = section.querySelector('.section-content');
+                content.style.maxHeight = 'none';
+            });
+            saveCollapseState();
+        }
+
+        // Collapse all sections
+        function collapseAllSections() {
+            document.querySelectorAll('.section.collapsible').forEach(section => {
+                section.classList.add('collapsed');
+                const content = section.querySelector('.section-content');
+                content.style.maxHeight = '0';
+            });
+            saveCollapseState();
+        }
+
+        // Save collapse state to localStorage
+        function saveCollapseState() {
+            const collapsedSections = [];
+            document.querySelectorAll('.section.collapsible.collapsed').forEach(section => {
+                collapsedSections.push(section.getAttribute('data-section-id'));
+            });
+            localStorage.setItem('collapsedSections', JSON.stringify(collapsedSections));
+        }
+
+        // Restore collapse state from localStorage
+        function restoreCollapseState() {
+            const collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '[]');
+            collapsedSections.forEach(sectionId => {
+                const section = document.querySelector('[data-section-id="' + sectionId + '"]');
+                if (section) {
+                    section.classList.add('collapsed');
+                    const content = document.getElementById(sectionId);
+                    content.style.maxHeight = '0';
+                }
+            });
+        }
+
+        // Auto-save form data
+        let autoSaveTimeout;
+        function autoSaveForm() {
+            clearTimeout(autoSaveTimeout);
+            updateAutoSaveIndicator('saving');
+            
+            autoSaveTimeout = setTimeout(() => {
+                try {
+                    const formData = getFormData();
+                    localStorage.setItem('talentHubFormData', JSON.stringify(formData));
+                    localStorage.setItem('talentHubFormTimestamp', new Date().toISOString());
+                    updateAutoSaveIndicator('saved');
+                } catch (error) {
+                    console.error('Auto-save failed:', error);
+                    updateAutoSaveIndicator('error');
+                }
+            }, 500);
+        }
+
+        // Get form data
+        function getFormData() {
+            const form = document.getElementById('dynamicGeneratedForm');
+            if (!form) return {};
+            
+            const formData = new FormData(form);
+            const data = {};
+            
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            return data;
+        }
+
+        // Restore form data
+        function restoreFormData() {
+            try {
+                const savedData = localStorage.getItem('talentHubFormData');
+                const savedTimestamp = localStorage.getItem('talentHubFormTimestamp');
+                
+                if (!savedData) return;
+                
+                const data = JSON.parse(savedData);
+                const form = document.getElementById('dynamicGeneratedForm');
+                if (!form) return;
+                
+                // Show restoration message
+                const timestamp = savedTimestamp ? new Date(savedTimestamp).toLocaleString() : 'unknown time';
+                const restore = confirm('Found saved form data from ' + timestamp + '. Would you like to restore it?');
+                
+                if (!restore) {
+                    localStorage.removeItem('talentHubFormData');
+                    localStorage.removeItem('talentHubFormTimestamp');
+                    return;
+                }
+                
+                // Restore form values
+                Object.keys(data).forEach(key => {
+                    const value = data[key];
+                    const fields = form.querySelectorAll('[name="' + key + '"]');
+                    
+                    fields.forEach(field => {
+                        if (field.type === 'checkbox') {
+                            field.checked = Array.isArray(value) ? value.includes(field.value) : value === field.value;
+                        } else if (field.type === 'radio') {
+                            field.checked = field.value === value;
+                        } else {
+                            field.value = value;
+                        }
+                    });
+                });
+                
+                // Update progress and check conditional fields
+                setTimeout(() => {
+                    updateProgress();
+                    checkAllConditionalFields();
+                }, 100);
+                
+            } catch (error) {
+                console.error('Failed to restore form data:', error);
+            }
+        }
+
+        // Update auto-save indicator
+        function updateAutoSaveIndicator(status) {
+            // Visual updates commented out but logic preserved
+            // const indicator = document.getElementById('autosaveIndicator');
+            // const text = indicator.querySelector('.autosave-text');
+            
+            // indicator.className = 'autosave-indicator ' + status;
+            
+            // switch(status) {
+            //     case 'saving':
+            //         text.textContent = 'Saving...';
+            //         break;
+            //     case 'saved':
+            //         text.textContent = 'All changes saved';
+            //         setTimeout(() => {
+            //             indicator.className = 'autosave-indicator';
+            //         }, 2000);
+            //         break;
+            //     case 'error':
+            //         text.textContent = 'Save failed';
+            //         break;
+            // }
+        }
+    </script>
+</body>
+</html>
