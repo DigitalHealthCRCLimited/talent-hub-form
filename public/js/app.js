@@ -40,6 +40,11 @@ class TalentHubApp {
             this.conditionalLogic = new ConditionalLogic();
             window.conditionalLogic = this.conditionalLogic;
             
+            // Initialize adaptive conditional logic
+            this.adaptiveLogic = new AdaptiveConditionalLogic();
+            this.adaptiveLogic.initialize(formData);
+            window.adaptiveLogic = this.adaptiveLogic;
+            
             this.progressTracker.initialize();
             this.uiManager.restoreCollapseState();
             

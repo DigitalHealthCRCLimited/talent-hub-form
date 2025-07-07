@@ -10,7 +10,7 @@ body {
     color: #ffffff;
     background: #000000;
     min-height: 100vh;
-    padding: 20px;
+    padding: 0px;
 }
 
 .container {
@@ -28,7 +28,7 @@ body {
     color: white;
     padding: 30px 40px;
     position: relative;
-    border-bottom: 1px solid #222222;
+    border-bottom: 1px solid #000000;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -68,7 +68,7 @@ body {
 
 .form-container {
     padding: 40px;
-    background: #111111;
+    background: linear-gradient(180deg, #000000, #1b013f, #000000);;
 }
 
 /* Progress Indicator Styles */
@@ -599,7 +599,7 @@ textarea::placeholder {
     }
 
     .dhcrc-logo {
-        height: 50px;
+        height: 75px;
     }
     
     .progress-container {

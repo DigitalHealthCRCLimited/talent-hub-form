@@ -78,10 +78,11 @@ class ProgressTracker {
     }
 
     /**
-     * Get field groups (group by name for radio/checkbox)
+     * Get field groups (group by name for radio/checkbox) - only from visible fields
      */
     getFieldGroups(form) {
-        const allFields = form.querySelectorAll('input, select, textarea');
+        // Only get fields from visible field wrappers
+        const allFields = form.querySelectorAll('.field-wrapper:not([style*="display: none"]) input, .field-wrapper:not([style*="display: none"]) select, .field-wrapper:not([style*="display: none"]) textarea');
         const fieldGroups = new Map();
         
         allFields.forEach(field => {
@@ -155,26 +156,36 @@ class ProgressTracker {
     }
 
     /**
-     * Get current form data
+     * Get current form data - only from visible fields
      */
     getFormData() {
         const form = document.getElementById('dynamicGeneratedForm');
         if (!form) return {};
         
-        const formData = new FormData(form);
+        // Only get data from visible fields
+        const visibleFields = form.querySelectorAll('.field-wrapper:not([style*="display: none"]) input, .field-wrapper:not([style*="display: none"]) select, .field-wrapper:not([style*="display: none"]) textarea');
         const data = {};
         
-        for (let [key, value] of formData.entries()) {
-            if (data[key]) {
-                if (Array.isArray(data[key])) {
-                    data[key].push(value);
-                } else {
-                    data[key] = [data[key], value];
+        visibleFields.forEach(field => {
+            const key = field.name;
+            const value = field.value;
+            
+            if (field.type === 'checkbox' || field.type === 'radio') {
+                if (field.checked) {
+                    if (data[key]) {
+                        if (Array.isArray(data[key])) {
+                            data[key].push(value);
+                        } else {
+                            data[key] = [data[key], value];
+                        }
+                    } else {
+                        data[key] = value;
+                    }
                 }
-            } else {
+            } else if (value) {
                 data[key] = value;
             }
-        }
+        });
         
         return data;
     }
@@ -208,6 +219,11 @@ class ProgressTracker {
                 this.updateProgress();
                 if (window.conditionalLogic) {
                     window.conditionalLogic.checkAllConditionalFields();
+                }
+                // Trigger adaptive logic after restoration
+                if (window.adaptiveLogic) {
+                    window.adaptiveLogic.evaluateCurrentState();
+                    window.adaptiveLogic.applyConditionalLogic();
                 }
             }, 100);
             
@@ -264,6 +280,14 @@ class ProgressTracker {
                 break;
         }
         */
+    }
+
+    /**
+     * Reinitialize event listeners for visible fields only
+     */
+    reinitializeForVisibleFields() {
+        this.setupEventListeners();
+        this.updateProgress();
     }
 
     /**

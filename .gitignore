@@ -1,7 +1,8 @@
 node_modules/
-*.log
 .env
+*.log
 .DS_Store
-submissions/*.json
-submissions/*.csv
+submissions/
 .claude/
+archive/
+public/node_modules/

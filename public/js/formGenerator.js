@@ -149,17 +149,37 @@ class FormGenerator {
      */
     generateFormGroup(item) {
         const fieldName = item.form_label.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const requiredClass = item.required === 'true' ? 'required' : '';
-        const requiredAttr = item.required === 'true' ? 'required' : '';
+        const requiredClass = item.required === 'TRUE' ? 'required' : '';
+        const requiredAttr = item.required === 'TRUE' ? 'required' : '';
         
-        const showByDefault = item.show_by_default !== 'false';
+        const showByDefault = item.show_by_default !== 'FALSE';
         const dependsOnField = item.depends_on_field || '';
         const dependsOnValues = item.depends_on_values || '';
         
-        const conditionalAttrs = dependsOnField ? 
-            `data-depends-on="${dependsOnField}" data-depends-values="${dependsOnValues}"${!showByDefault ? ' style="display: none;"' : ''}` : '';
+        // Add complexity and type attributes for adaptive logic
+        const complexityAttrs = `data-complexity-simple="${item.complexity_simple || 'FALSE'}" 
+                                data-complexity-standard="${item.complexity_standard || 'FALSE'}" 
+                                data-complexity-complex="${item.complexity_complex || 'FALSE'}"`;
         
-        let html = `<div class="form-group conditional-field" ${conditionalAttrs}>`;
+        const typeAttrs = `data-type-strategic="${item.type_strategic || 'FALSE'}" 
+                          data-type-technical="${item.type_technical || 'FALSE'}" 
+                          data-type-operational="${item.type_operational || 'FALSE'}"`;
+        
+        const isUniversal = item.is_universal === 'TRUE';
+        const universalAttr = `data-is-universal="${isUniversal}"`;
+        
+        // Traditional conditional attributes
+        const conditionalAttrs = dependsOnField ? 
+            `data-depends-on="${dependsOnField}" data-depends-values="${dependsOnValues}"` : '';
+        
+        // Determine initial visibility
+        let initialVisibility = '';
+        if (!showByDefault || (!isUniversal && !dependsOnField)) {
+            initialVisibility = ' style="display: none;"';
+        }
+        
+        let html = `<div class="field-wrapper" data-field-name="${fieldName}" ${conditionalAttrs} ${complexityAttrs} ${typeAttrs} ${universalAttr}${initialVisibility}>`;
+        html += `<div class="form-group">`;
         html += `<label class="form-label ${requiredClass}">${item.form_label}</label>`;
         
         if (item.form_instructions) {
@@ -167,6 +187,7 @@ class FormGenerator {
         }
         
         html += this.generateFormField(item, fieldName, requiredAttr);
+        html += '</div>';
         html += '</div>';
         
         return html;
