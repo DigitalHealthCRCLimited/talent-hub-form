@@ -25,53 +25,46 @@ body::before {
     height: 100%;
     z-index: -1;
     background: 
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 50px,
-            rgba(255, 255, 255, 0.08) 50px,
-            rgba(255, 255, 255, 0.08) 52px,
-            transparent 52px,
-            transparent 100px
-        ),
-        repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 80px,
-            rgba(255, 255, 255, 0.05) 80px,
-            rgba(255, 255, 255, 0.05) 82px,
-            transparent 82px,
-            transparent 160px
-        ),
-        repeating-linear-gradient(
-            -45deg,
-            transparent,
-            transparent 120px,
-            rgba(255, 255, 255, 0.03) 120px,
-            rgba(255, 255, 255, 0.03) 122px,
-            transparent 122px,
-            transparent 240px
-        );
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent),
+        linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.02), transparent),
+        linear-gradient(-45deg, transparent, rgba(255, 255, 255, 0.02), transparent),
+        linear-gradient(0deg, transparent, rgba(255, 255, 255, 0.01), transparent);
+    background-size: 
+        100px 2px,
+        150px 1px,
+        120px 1px,
+        80px 1px;
+    background-position: 
+        0 0,
+        0 0,
+        0 0,
+        0 0;
     animation: 
-        threads-move-1 20s linear infinite,
-        threads-move-2 15s linear infinite reverse,
-        threads-move-3 25s linear infinite;
+        threads-1 8s linear infinite,
+        threads-2 12s linear infinite,
+        threads-3 15s linear infinite,
+        threads-4 10s linear infinite;
 }
 
-/* Thread movement animations */
-@keyframes threads-move-1 {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(100px); }
+/* Individual thread animations */
+@keyframes threads-1 {
+    0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+    100% { background-position: 100px 0, 0 0, 0 0, 0 0; }
 }
 
-@keyframes threads-move-2 {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(80px, 80px); }
+@keyframes threads-2 {
+    0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 150px 150px, 0 0, 0 0; }
 }
 
-@keyframes threads-move-3 {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(-120px, 120px); }
+@keyframes threads-3 {
+    0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 0 0, -120px 120px, 0 0; }
+}
+
+@keyframes threads-4 {
+    0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+    100% { background-position: 0 0, 0 0, 0 0, 80px 0; }
 }
 
 /* Floating thread elements */
@@ -84,53 +77,58 @@ body::after {
     height: 100%;
     z-index: -1;
     background-image: 
-        radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.15), transparent),
-        radial-gradient(2px 2px at 40% 70%, rgba(255, 255, 255, 0.12), transparent),
-        radial-gradient(1px 1px at 80% 40%, rgba(255, 255, 255, 0.1), transparent),
-        radial-gradient(1px 1px at 60% 20%, rgba(255, 255, 255, 0.08), transparent),
-        radial-gradient(2px 2px at 90% 80%, rgba(255, 255, 255, 0.14), transparent);
+        radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.1), transparent),
+        radial-gradient(1px 1px at 40% 70%, rgba(255, 255, 255, 0.08), transparent),
+        radial-gradient(1px 1px at 80% 40%, rgba(255, 255, 255, 0.06), transparent),
+        radial-gradient(1px 1px at 60% 20%, rgba(255, 255, 255, 0.04), transparent),
+        radial-gradient(1px 1px at 90% 80%, rgba(255, 255, 255, 0.05), transparent);
     background-size: 
+        200px 200px,
         300px 300px,
-        500px 500px,
+        250px 250px,
         400px 400px,
-        600px 600px,
-        250px 250px;
+        180px 180px;
     animation: 
-        float-1 20s ease-in-out infinite,
-        float-2 25s ease-in-out infinite,
-        float-3 30s ease-in-out infinite,
-        float-4 15s ease-in-out infinite,
-        float-5 18s ease-in-out infinite;
+        float-1 20s linear infinite,
+        float-2 25s linear infinite,
+        float-3 30s linear infinite,
+        float-4 15s linear infinite,
+        float-5 18s linear infinite;
 }
 
 @keyframes float-1 {
-    0%, 100% { transform: translate(0, 0); }
-    25% { transform: translate(-20px, -30px); }
-    50% { transform: translate(15px, -20px); }
-    75% { transform: translate(-10px, -40px); }
+    0% { transform: translateY(0px) translateX(0px); }
+    25% { transform: translateY(-20px) translateX(10px); }
+    50% { transform: translateY(-15px) translateX(-5px); }
+    75% { transform: translateY(-25px) translateX(15px); }
+    100% { transform: translateY(0px) translateX(0px); }
 }
 
 @keyframes float-2 {
-    0%, 100% { transform: translate(0, 0); }
-    33% { transform: translate(25px, -15px); }
-    66% { transform: translate(-15px, -35px); }
+    0% { transform: translateY(0px) translateX(0px); }
+    33% { transform: translateY(15px) translateX(-10px); }
+    66% { transform: translateY(-10px) translateX(20px); }
+    100% { transform: translateY(0px) translateX(0px); }
 }
 
 @keyframes float-3 {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(30px, -25px); }
+    0% { transform: translateY(0px) translateX(0px); }
+    50% { transform: translateY(20px) translateX(-15px); }
+    100% { transform: translateY(0px) translateX(0px); }
 }
 
 @keyframes float-4 {
-    0%, 100% { transform: translate(0, 0); }
-    25% { transform: translate(-15px, -20px); }
-    75% { transform: translate(20px, -30px); }
+    0% { transform: translateY(0px) translateX(0px); }
+    25% { transform: translateY(-10px) translateX(-20px); }
+    75% { transform: translateY(10px) translateX(10px); }
+    100% { transform: translateY(0px) translateX(0px); }
 }
 
 @keyframes float-5 {
-    0%, 100% { transform: translate(0, 0); }
-    40% { transform: translate(35px, -10px); }
-    80% { transform: translate(-25px, -40px); }
+    0% { transform: translateY(0px) translateX(0px); }
+    40% { transform: translateY(25px) translateX(5px); }
+    80% { transform: translateY(-15px) translateX(-10px); }
+    100% { transform: translateY(0px) translateX(0px); }
 }
 
 .container {
