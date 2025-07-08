@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="aurora-container">
+        <canvas id="aurora-canvas"></canvas>
+    </div>
     <div class="container">
         <div class="header">
             <div class="header-left">
@@ -42,5 +45,92 @@
     <script src="js/complexityCalculator.js"></script>
     <script src="js/adaptiveConditionalLogic.js"></script>
     <script src="js/app.js"></script>
+    
+    <script>
+        const canvas = document.getElementById('aurora-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Aurora parameters
+        const colorStops = ['#5227FF', '#7cff67', '#5227FF'];
+        const amplitude = 0.3;
+        const frequency = 0.01;
+        const speed = 0.005;
+        const layerOpacity = 0.3;
+
+        // Resize canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Simple noise function
+        function noise(x, y, t) {
+            const n = Math.sin(x * frequency + t) * Math.cos(y * frequency + t * 0.8) +
+                     Math.sin(x * frequency * 2 - t * 1.2) * Math.cos(y * frequency * 3 + t) * 0.5 +
+                     Math.sin(x * frequency * 3 + t * 0.5) * Math.cos(y * frequency - t * 1.5) * 0.25;
+            return (n + 1.5) / 3;
+        }
+
+        // Color interpolation
+        function interpolateColor(color1, color2, factor) {
+            const r1 = parseInt(color1.substr(1, 2), 16);
+            const g1 = parseInt(color1.substr(3, 2), 16);
+            const b1 = parseInt(color1.substr(5, 2), 16);
+            
+            const r2 = parseInt(color2.substr(1, 2), 16);
+            const g2 = parseInt(color2.substr(3, 2), 16);
+            const b2 = parseInt(color2.substr(5, 2), 16);
+            
+            const r = Math.round(r1 + (r2 - r1) * factor);
+            const g = Math.round(g1 + (g2 - g1) * factor);
+            const b = Math.round(b1 + (b2 - b1) * factor);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Animation
+        let time = 0;
+        
+        function drawAurora() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Create multiple aurora layers
+            for (let layer = 0; layer < 3; layer++) {
+                ctx.globalAlpha = layerOpacity;
+                
+                // Draw aurora waves
+                for (let x = 0; x < canvas.width; x += 5) {
+                    const noiseValue = noise(x, layer * 100, time);
+                    const height = noiseValue * canvas.height * amplitude;
+                    const y = canvas.height * 0.3 + height + layer * 50;
+                    
+                    // Color based on position
+                    const colorFactor = x / canvas.width;
+                    let color;
+                    if (colorFactor < 0.5) {
+                        color = interpolateColor(colorStops[0], colorStops[1], colorFactor * 2);
+                    } else {
+                        color = interpolateColor(colorStops[1], colorStops[2], (colorFactor - 0.5) * 2);
+                    }
+                    
+                    // Create gradient
+                    const gradient = ctx.createLinearGradient(x, y - height, x, y + height);
+                    gradient.addColorStop(0, 'transparent');
+                    gradient.addColorStop(0.5, color);
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y - height, 5, height * 2);
+                }
+            }
+            
+            time += speed;
+            requestAnimationFrame(drawAurora);
+        }
+        
+        drawAurora();
+    </script>
 </body>
 </html>
