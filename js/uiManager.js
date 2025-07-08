@@ -186,12 +186,7 @@ class ConditionalLogic {
             this.checkConditionalField(field, changedField);
         });
         
-        // Update progress after conditional field changes
-        setTimeout(() => {
-            if (window.progressTracker) {
-                window.progressTracker.updateProgress();
-            }
-        }, 350);
+        // Field changes applied (progress tracking disabled)";
     }
 
     /**

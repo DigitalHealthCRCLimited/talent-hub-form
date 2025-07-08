@@ -105,12 +105,7 @@ class AdaptiveConditionalLogic {
         // Hide empty sections after applying field logic
         this.manageSectionVisibility();
 
-        // Update progress after applying logic
-        setTimeout(() => {
-            if (window.progressTracker) {
-                window.progressTracker.reinitializeForVisibleFields();
-            }
-        }, 350);
+        // Logic updated (progress tracking disabled)
     }
 
     /**

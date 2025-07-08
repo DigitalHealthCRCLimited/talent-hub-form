@@ -159,9 +159,6 @@ class FormSubmission {
      */
     resetForm(formElement) {
         formElement.reset();
-        if (window.progressTracker) {
-            window.progressTracker.updateProgress();
-        }
         window.scrollTo(0, 0);
     }
 

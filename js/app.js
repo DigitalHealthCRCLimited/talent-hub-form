@@ -6,14 +6,12 @@ class TalentHubApp {
     constructor() {
         this.formGenerator = new FormGenerator();
         this.formSubmission = new FormSubmission();
-        this.progressTracker = new ProgressTracker();
         this.uiManager = new UIManager();
         this.conditionalLogic = null; // Will be initialized after form is generated
         
         // Make instances globally available for backwards compatibility
         window.formGenerator = this.formGenerator;
         window.formSubmission = this.formSubmission;
-        window.progressTracker = this.progressTracker;
         window.uiManager = this.uiManager;
     }
 
@@ -45,7 +43,6 @@ class TalentHubApp {
             this.adaptiveLogic.initialize(formData);
             window.adaptiveLogic = this.adaptiveLogic;
             
-            this.progressTracker.initialize();
             this.uiManager.restoreCollapseState();
             
             // Show form and hide loading
@@ -88,8 +85,7 @@ class TalentHubApp {
             form.reset();
         }
         
-        // Update progress
-        this.progressTracker.updateProgress();
+        // Form was reset
         
         console.log('Application state reset');
     }
@@ -134,7 +130,6 @@ window.generateForm = function(formData) {
     if (window.conditionalLogic) {
         window.conditionalLogic.setupEventListeners();
     }
-    window.progressTracker.initialize();
 };
 
 // Form submission functions
@@ -149,21 +144,21 @@ window.checkServerHealth = function() {
     return window.formSubmission.checkServerHealth();
 };
 
-// Progress and auto-save functions
+// Progress and auto-save functions (disabled)
 window.initializeProgress = function() {
-    window.progressTracker.initialize();
+    // Progress tracking disabled
 };
 
 window.updateProgress = function() {
-    window.progressTracker.updateProgress();
+    // Progress tracking disabled
 };
 
 window.autoSaveForm = function() {
-    window.progressTracker.autoSaveForm();
+    // Auto-save disabled
 };
 
 window.restoreFormData = function() {
-    window.progressTracker.restoreFormData();
+    // Form data restoration disabled
 };
 
 // UI management functions

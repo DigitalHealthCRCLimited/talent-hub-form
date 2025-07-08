@@ -69,8 +69,9 @@ body {
 }
 
 .dhcrc-logo {
-    height: 60px;
+    height: 90px;
     width: auto;
+    margin-top: 18px; /* Nudge the logo down slightly */
 }
 
 .header h1 {
@@ -133,7 +134,7 @@ body {
 .section-controls {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin-bottom: 20px;
 }
 
@@ -313,17 +314,17 @@ body {
 }
 
 .radio-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
     margin-top: 10px;
 }
 
 .radio-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
-    padding: 15px;
+    padding: 12px 15px;
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(10px);
     border-radius: 10px;
@@ -371,6 +372,14 @@ body {
     margin-top: 30px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.ai-processing-note {
+    text-align: center;
+    font-size: 1.1em;
+    opacity: 0.8;
+    color: #cccccc;
+    margin-top: 20px;
 }
 
 .submit-btn {
@@ -497,7 +506,7 @@ textarea::placeholder {
     }
 
     .dhcrc-logo {
-        height: 75px;
+        height: 90px;
     }
 }
 

@@ -122,7 +122,7 @@ class FormGenerator {
      */
     generateSection(sectionTitle, sectionItems, sectionIndex) {
         const isAISection = sectionTitle.toLowerCase().includes('ai-assisted');
-        const sectionClass = isAISection ? 'section ai-section collapsible' : 'section collapsible';
+        const sectionClass = isAISection ? 'section ai-section collapsible collapsed' : 'section collapsible collapsed';
         const sectionId = 'section-' + sectionIndex;
         
         let html = `<div class="${sectionClass}" data-section-id="${sectionId}">`;
@@ -285,9 +285,9 @@ class FormGenerator {
         return `
             <div class="submit-section">
                 <button type="submit" class="submit-btn">Submit Problem Statement</button>
-                <div style="margin-top: 20px; color: #888888; font-size: 0.9em;">
-                    Our AI will process your submission and match you with qualified talent
-                </div>
+            </div>
+            <div class="ai-processing-note">
+                Our AI will process your submission and match you with qualified talent
             </div>
         `;
     }
