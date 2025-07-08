@@ -286,9 +286,9 @@ class FormGenerator {
             <div class="submit-section">
                 <button type="submit" class="submit-btn">Submit Problem Statement</button>
             </div>
-            <div class="ai-processing-note">
+            <p class="ai-processing-note">
                 Our AI will process your submission and match you with qualified talent
-            </div>
+            </p>
         `;
     }
 }

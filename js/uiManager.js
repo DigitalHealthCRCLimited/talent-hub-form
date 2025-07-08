@@ -85,17 +85,25 @@ class UIManager {
      * Restore collapse state from localStorage
      */
     restoreCollapseState() {
-        const collapsedSections = JSON.parse(localStorage.getItem('collapsedSections') || '[]');
-        collapsedSections.forEach(sectionId => {
-            const section = document.querySelector(`[data-section-id="${sectionId}"]`);
-            if (section) {
-                section.classList.add('collapsed');
-                const content = document.getElementById(sectionId);
-                if (content) {
-                    content.style.maxHeight = '0';
+        const savedState = localStorage.getItem('collapsedSections');
+
+        if (savedState === null) {
+            // If no state is saved, collapse all sections by default on first load.
+            this.collapseAllSections();
+        } else {
+            // Restore the saved state from localStorage.
+            const collapsedSections = JSON.parse(savedState);
+            collapsedSections.forEach(sectionId => {
+                const section = document.querySelector(`[data-section-id="${sectionId}"]`);
+                if (section) {
+                    section.classList.add('collapsed');
+                    const content = document.getElementById(sectionId);
+                    if (content) {
+                        content.style.maxHeight = '0';
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
