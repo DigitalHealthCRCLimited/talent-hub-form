@@ -1,13 +1,12 @@
 # Adaptive Form Design
 
-## The Challenge
-I want to create an interactive adaptive form.
+## The Idea
+This is an adaptive form.
 The Admin can modify the fields of the form via a csv file (form.csv).
 The appearnce of some fields depened on the answerss to the previose answers.
-The current code is an implementation of such form, how ever, I need a more complex logic for the dependant fields.
 
-##  Adaptive Form Logic
-We want a two-dimensional adaptive approach that dynamically shows relevant questions based on:
+##  The current adaptive Form Logic
+This is a two-dimensional adaptive approach that dynamically shows relevant questions based on:
 
 ### 1. **Project Type Categories**
 Different project types require different information:
@@ -80,4 +79,4 @@ Complexity determines the depth of information needed:
 - **Operational Projects**: Always show Soft Skills (16), Communication Frequency (20), hide Technical Skills (14) unless complex
 
 ## Result
-These relations should happen on tthe form and at the same time editable via the csv file.
+These relations are editable via the csv file.
