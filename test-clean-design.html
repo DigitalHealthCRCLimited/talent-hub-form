@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Design Test - Talent Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .demo-section {
+            background: rgba(42, 42, 42, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #444;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .demo-field {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+        
+        .demo-field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .demo-field select,
+        .demo-field input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .status-indicator {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+            color: #4CAF50;
+        }
+        
+        .design-note {
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>Talent Hub - Clean Design Test</h1>
+                <p>Testing the clean, professional design without background animations</p>
+            </div>
+            <div class="header-right">
+                <img src="https://digitalhealthcrc.com/wp-content/uploads/2022/09/DHCRC-Logo-Horizontal-Reversed-Colour-300x101.png" alt="Digital Health CRC Logo" class="dhcrc-logo">
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="design-note">
+                <h3>✨ Clean Design Features</h3>
+                <ul>
+                    <li><strong>Simple black background</strong> - No animations or distractions</li>
+                    <li><strong>Solid container background</strong> - Clean #111111 background</li>
+                    <li><strong>Professional appearance</strong> - Focus on content, not effects</li>
+                    <li><strong>Fast loading</strong> - No complex CSS animations</li>
+                </ul>
+            </div>
+
+            <div class="demo-section">
+                <h2>Sample Form Fields</h2>
+                <p>This shows how the clean design looks with actual form elements:</p>
+                
+                <div class="demo-grid">
+                    <div class="demo-field">
+                        <label>Project Category</label>
+                        <select>
+                            <option>Strategic</option>
+                            <option>Technical</option>
+                            <option>Operational</option>
+                        </select>
+                    </div>
+                    
+                    <div class="demo-field">
+                        <label>Budget Range</label>
+                        <select>
+                            <option>Under $5K</option>
+                            <option>$5K-15K</option>
+                            <option>$15K-50K</option>
+                            <option>$50K-100K</option>
+                        </select>
+                    </div>
+                    
+                    <div class="demo-field">
+                        <label>Project Duration</label>
+                        <select>
+                            <option>1-2 weeks</option>
+                            <option>3-4 weeks</option>
+                            <option>1-3 months</option>
+                            <option>3-6 months</option>
+                        </select>
+                    </div>
+                    
+                    <div class="demo-field">
+                        <label>Organization Name</label>
+                        <input type="text" placeholder="Enter your organization name...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-indicator">
+                ✅ Clean design is active - No background animations or effects
+            </div>
+
+            <div class="demo-section">
+                <h3>Design Characteristics</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>What you see:</h4>
+                        <ul>
+                            <li>Pure black background (#000000)</li>
+                            <li>Clean gray container (#111111)</li>
+                            <li>Simple, readable typography</li>
+                            <li>Professional form styling</li>
+                            <li>No visual distractions</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>What you DON'T see:</h4>
+                        <ul>
+                            <li>❌ Animated threads</li>
+                            <li>❌ Floating particles</li>
+                            <li>❌ Moving backgrounds</li>
+                            <li>❌ CSS animations</li>
+                            <li>❌ Backdrop blur effects</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>🚀 Ready for Production</h3>
+                <p>This clean design is perfect for:</p>
+                <ul>
+                    <li><strong>Professional presentations</strong> - Clean, distraction-free interface</li>
+                    <li><strong>Fast loading</strong> - No complex animations to slow down the page</li>
+                    <li><strong>Accessibility</strong> - No moving elements that could cause issues</li>
+                    <li><strong>Focus on functionality</strong> - The adaptive form logic is the star</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

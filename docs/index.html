@@ -51,6 +51,9 @@
         </div>
     </div>
 
+    <!-- Aurora background container -->
+    <div class="aurora-background" id="auroraBackground"></div>
+
     <!-- Load JavaScript modules in correct order -->
     <script src="js/formGenerator.js"></script>
     <script src="js/formSubmission.js"></script>
@@ -58,6 +61,23 @@
     <script src="js/uiManager.js"></script>
     <script src="js/complexityCalculator.js"></script>
     <script src="js/adaptiveConditionalLogic.js"></script>
+    <script src="js/aurora.js"></script>
     <script src="js/app.js"></script>
+    
+    <!-- Initialize Aurora Background -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const auroraContainer = document.getElementById('auroraBackground');
+            if (auroraContainer) {
+                window.auroraEffect = new Aurora(auroraContainer, {
+                    colorStops: ["#3A29FF", "#FF94B4", "#FF3232"],
+                    blend: 0.5,
+                    amplitude: 1.0,
+                    speed: 0.5,
+                    opacity: 0.4
+                });
+            }
+        });
+    </script>
 </body>
 </html>

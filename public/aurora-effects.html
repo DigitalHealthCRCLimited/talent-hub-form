@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Borealis Effects</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .demo-container {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .demo-title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .demo-content {
+            z-index: 5;
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Demo 1: Pure CSS Aurora with Animated Gradients */
+        #css-aurora {
+            background: #000428;
+            background: linear-gradient(to bottom, #000428 0%, #5100e8 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .aurora-gradient {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            width: 200%;
+            height: 200%;
+            background: transparent;
+            filter: blur(100px);
+            opacity: 0;
+            animation: aurora-fade 8s ease-in-out infinite;
+        }
+
+        .aurora-gradient:nth-child(1) {
+            background: radial-gradient(ellipse at top, #5227FF 0%, transparent 70%);
+            animation-delay: 0s;
+            animation-duration: 10s;
+            transform: translateX(-30%) rotate(-20deg);
+        }
+
+        .aurora-gradient:nth-child(2) {
+            background: radial-gradient(ellipse at top left, #fff200 0%, transparent 60%);
+            animation-delay: 2s;
+            animation-duration: 12s;
+            transform: translateX(20%) rotate(15deg);
+        }
+
+        .aurora-gradient:nth-child(3) {
+            background: radial-gradient(ellipse at top right, #020d60 0%, transparent 65%);
+            animation-delay: 4s;
+            animation-duration: 14s;
+            transform: translateX(-10%) rotate(-10deg);
+        }
+
+        .aurora-gradient:nth-child(4) {
+            background: radial-gradient(ellipse at center, #690169 0%, transparent 70%);
+            animation-delay: 6s;
+            animation-duration: 16s;
+            transform: translateY(-20%) rotate(5deg);
+        }
+
+        @keyframes aurora-fade {
+            0%, 100% { 
+                opacity: 0;
+                transform: translateY(20%) scale(0.8);
+            }
+            20% { 
+                opacity: 0.3;
+            }
+            50% { 
+                opacity: 0.8;
+                transform: translateY(-10%) scale(1.2);
+            }
+            80% { 
+                opacity: 0.3;
+            }
+        }
+
+        /* Demo 2: Animated Blobs Aurora */
+        #blob-aurora {
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a0033 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.7;
+            animation: blob-move 20s infinite ease-in-out;
+        }
+
+        .blob:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: #5227FF;
+            top: -300px;
+            left: -100px;
+            animation-duration: 25s;
+            animation-delay: 0s;
+        }
+
+        .blob:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            background: #7cff67;
+            top: -200px;
+            right: -100px;
+            animation-duration: 30s;
+            animation-delay: 5s;
+        }
+
+        .blob:nth-child(3) {
+            width: 450px;
+            height: 450px;
+            background: #ff0080;
+            bottom: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-duration: 35s;
+            animation-delay: 10s;
+        }
+
+        @keyframes blob-move {
+            0%, 100% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            25% {
+                transform: translate(100px, -50px) scale(1.1) rotate(90deg);
+            }
+            50% {
+                transform: translate(-50px, 100px) scale(0.9) rotate(180deg);
+            }
+            75% {
+                transform: translate(50px, 50px) scale(1.05) rotate(270deg);
+            }
+        }
+
+        /* Demo 3: Canvas-based Aurora (similar to your React component) */
+        #canvas-aurora {
+            background: #000;
+            position: relative;
+        }
+
+        #aurora-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav button {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav button.active {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo 1: Pure CSS Aurora -->
+    <div id="css-aurora" class="demo-container">
+        <div class="demo-title">Pure CSS Aurora</div>
+        <div class="aurora-gradient"></div>
+        <div class="aurora-gradient"></div>
+        <div class="aurora-gradient"></div>
+        <div class="aurora-gradient"></div>
+        <div class="demo-content">
+            <h1>CSS Gradient Aurora</h1>
+            <p>This aurora effect is created using pure CSS with animated radial gradients and blur filters. No JavaScript required!</p>
+        </div>
+    </div>
+
+    <!-- Demo 2: Animated Blobs -->
+    <div id="blob-aurora" class="demo-container">
+        <div class="demo-title">Animated Blob Aurora</div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="demo-content">
+            <h1>Blob-based Aurora</h1>
+            <p>This effect uses animated blob shapes with blur filters to create an organic aurora effect.</p>
+        </div>
+    </div>
+
+    <!-- Demo 3: Canvas Aurora -->
+    <div id="canvas-aurora" class="demo-container">
+        <div class="demo-title">Canvas Aurora (WebGL-style)</div>
+        <canvas id="aurora-canvas"></canvas>
+        <div class="demo-content">
+            <h1>Canvas Aurora Effect</h1>
+            <p>This is a canvas-based implementation similar to your React component, using noise functions and gradient colors.</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+        <button onclick="scrollToDemo('css-aurora')" class="active">CSS Aurora</button>
+        <button onclick="scrollToDemo('blob-aurora')">Blob Aurora</button>
+        <button onclick="scrollToDemo('canvas-aurora')">Canvas Aurora</button>
+    </div>
+
+    <script>
+        // Navigation
+        function scrollToDemo(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            
+            // Update active button
+            document.querySelectorAll('.nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Canvas Aurora Implementation
+        const canvas = document.getElementById('aurora-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Resize canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Simple noise function (not as sophisticated as the shader version)
+        function noise(x, y, t) {
+            const n = Math.sin(x * 0.01 + t) * Math.cos(y * 0.01 + t * 0.8) +
+                     Math.sin(x * 0.02 - t * 1.2) * Math.cos(y * 0.03 + t) * 0.5 +
+                     Math.sin(x * 0.03 + t * 0.5) * Math.cos(y * 0.01 - t * 1.5) * 0.25;
+            return (n + 1.5) / 3;
+        }
+
+        // Color interpolation
+        function interpolateColor(color1, color2, factor) {
+            const r1 = parseInt(color1.substr(1, 2), 16);
+            const g1 = parseInt(color1.substr(3, 2), 16);
+            const b1 = parseInt(color1.substr(5, 2), 16);
+            
+            const r2 = parseInt(color2.substr(1, 2), 16);
+            const g2 = parseInt(color2.substr(3, 2), 16);
+            const b2 = parseInt(color2.substr(5, 2), 16);
+            
+            const r = Math.round(r1 + (r2 - r1) * factor);
+            const g = Math.round(g1 + (g2 - g1) * factor);
+            const b = Math.round(b1 + (b2 - b1) * factor);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Animation
+        let time = 0;
+        const colorStops = ['#5227FF', '#7cff67', '#5227FF'];
+        
+        function drawAurora() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Create multiple aurora layers
+            for (let layer = 0; layer < 3; layer++) {
+                ctx.globalAlpha = 0.3;
+                
+                // Draw aurora waves
+                for (let x = 0; x < canvas.width; x += 5) {
+                    const noiseValue = noise(x, layer * 100, time);
+                    const height = noiseValue * canvas.height * 0.3;
+                    const y = canvas.height * 0.3 + height + layer * 50;
+                    
+                    // Color based on position
+                    const colorFactor = x / canvas.width;
+                    let color;
+                    if (colorFactor < 0.5) {
+                        color = interpolateColor(colorStops[0], colorStops[1], colorFactor * 2);
+                    } else {
+                        color = interpolateColor(colorStops[1], colorStops[2], (colorFactor - 0.5) * 2);
+                    }
+                    
+                    // Create gradient
+                    const gradient = ctx.createLinearGradient(x, y - height, x, y + height);
+                    gradient.addColorStop(0, 'transparent');
+                    gradient.addColorStop(0.5, color);
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y - height, 5, height * 2);
+                }
+            }
+            
+            time += 0.005;
+            requestAnimationFrame(drawAurora);
+        }
+        
+        drawAurora();
+    </script>
+</body>
+</html>
