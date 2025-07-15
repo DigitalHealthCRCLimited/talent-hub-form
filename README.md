@@ -21,7 +21,7 @@ Complexity determines the depth of information needed:
 - **Complex Projects** ($100K+, 6+ months) → 18-20 comprehensive fields
 
 ## How It Works
-1. **Universal Fields**: Core questions appear for every project (organization, problem statement, deliverables, etc.)
+1. **Universal Fields**: Core questions appear for every project (organisation, problem statement, deliverables, etc.)
 2. **Type-Based Filtering**: Problem category selection triggers relevant specialist fields
 3. **Complexity-Based Progressive Disclosure**: Budget and duration automatically determine form depth
 4. **Smart Combinations**: A simple strategic project shows only 8 fields, while a complex technical project shows the full detailed form
@@ -29,7 +29,7 @@ Complexity determines the depth of information needed:
 ## Complete Question Set
 
 ### Universal Fields (Always Show)
-1. **Organization Details** - Text field
+1. **Organisation Details** - Text field
 2. **Core Problem Statement** - Long text
 3. **Target Audience/Beneficiaries** - Text field
 4. **Problem Category** - Select: Strategic | Technical | Operational
